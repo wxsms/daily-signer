@@ -13,7 +13,7 @@ async function login () {
   })
   const page = await browser.newPage()
   await page.goto('https://passport.jd.com/new/login.aspx')
-  page.click('.login-tab.login-tab-r > a')
+  await page.click('.login-tab.login-tab-r > a')
   const savedUser = require('../../../config/user.json')
   if (savedUser) {
     await page.$eval('#loginname', (el, value) => el.value = value, savedUser.jd.username)
@@ -34,9 +34,7 @@ function getSavedCookies () {
 
 async function checkCookieStillValid (cookies) {
   console.log('检查 Cookies 是否有效...')
-  const browser = await puppeteer.launch({
-    headless: true
-  })
+  const browser = await puppeteer.launch()
   const page = await browser.newPage()
   await abortUselessRequests(page)
   await page.setCookie(...cookies)

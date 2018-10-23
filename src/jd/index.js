@@ -1,26 +1,26 @@
-const path = require('path')
-const fs = require('fs')
 const puppeteer = require('puppeteer')
-const auth = require('./auth')
-const {error} = require('../utils/log')
+const webAuth = require('./auth/web')
+const mobileAuth = require('./auth/mobile')
 
 module.exports = async function () {
-  console.log('任务开始：京东商城')
+  const browser = await puppeteer.launch()
+  console.log('任务开始：京东商城（移动端）')
   try {
-    await auth.checkCookieStillValid(auth.getSavedCookies())
+    await mobileAuth.checkCookieStillValid(mobileAuth.getSavedCookies())
   } catch (e) {
     console.log('Cookies 未找到或已过期，尝试重新登录...')
-    await auth.login()
+    await mobileAuth.login()
   }
-  const browser = await puppeteer.launch()
-  const jobsFiles = fs.readdirSync(path.join(__dirname, '/jobs'))
-  for (let i = 0; i < jobsFiles.length; i++) {
-    try {
-      await require('./jobs/' + jobsFiles[i])(browser)
-    } catch (e) {
-      console.log(error('任务失败'), error(e.message))
-    }
+  await require('./jobs/jingdou-daily-m')(browser)
+  console.log('任务开始：京东商城')
+  try {
+    await webAuth.checkCookieStillValid(webAuth.getSavedCookies())
+  } catch (e) {
+    console.log('Cookies 未找到或已过期，尝试重新登录...')
+    await webAuth.login()
   }
+  await require('./jobs/jingdou-daily')(browser)
+  await require('./jobs/jingdou-shops')(browser)
   console.log('任务已全部完成')
   console.log('-----------------')
 }
