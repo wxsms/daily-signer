@@ -1,3 +1,7 @@
+/.idea
+/config/user.json
+/temp/cookies-*
+
 # Logs
 logs
 *.log
