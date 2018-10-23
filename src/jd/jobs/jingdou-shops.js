@@ -1,10 +1,12 @@
 const auth = require('../auth')
 const cookies = auth.getSavedCookies()
 const {success, error, mute} = require('../../utils/log')
+const {abortUselessRequests} = require('../../utils/puppeteer')
 
 module.exports = async function (browser) {
   console.log('开始店铺签到任务')
   const page = await browser.newPage()
+  await abortUselessRequests(page)
   await page.setCookie(...cookies)
   await page.goto('https://bean.jd.com/myJingBean/list')
   await page.waitFor('.bean-shop-list')
@@ -16,6 +18,7 @@ module.exports = async function (browser) {
       const href = await page.evaluate(element => element.getAttribute('href'), link)
       //console.log(linkText, href)
       const shopPage = await browser.newPage()
+      await abortUselessRequests(shopPage)
       await shopPage.setCookie(...cookies)
       await shopPage.goto(href)
       await shopPage.waitFor('.jSign')

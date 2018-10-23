@@ -1,6 +1,7 @@
 const puppeteer = require('puppeteer')
 const fs = require('fs')
 const path = require('path')
+const {abortUselessRequests} = require('../../utils/puppeteer')
 
 async function login () {
   const browser = await puppeteer.launch({
@@ -37,6 +38,7 @@ async function checkCookieStillValid (cookies) {
     headless: true
   })
   const page = await browser.newPage()
+  await abortUselessRequests(page)
   await page.setCookie(...cookies)
   await page.goto('https://order.jd.com/center/list.action')
   const valid = await page.$('body[myjd="_MYJD_ordercenter"]') !== null

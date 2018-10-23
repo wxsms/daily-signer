@@ -12,12 +12,7 @@ module.exports = async function () {
     console.log('Cookies 未找到或已过期，尝试重新登录...')
     await auth.login()
   }
-  const browser = await puppeteer.launch({
-    defaultViewport: {
-      width: 1500,
-      height: 768
-    }
-  })
+  const browser = await puppeteer.launch()
   const jobsFiles = fs.readdirSync(path.join(__dirname, '/jobs'))
   for (let i = 0; i < jobsFiles.length; i++) {
     try {
