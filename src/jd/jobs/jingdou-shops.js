@@ -27,15 +27,15 @@ module.exports = async function (browser) {
         const jingdou = await shopPage.$('.jingdou')
         if (jingdou) {
           const successText = await shopPage.evaluate(element => element.textContent, jingdou)
-          console.log(linkText, success(successText))
+          console.log('  -', linkText, success(successText))
         } else {
-          console.log(linkText, '颗粒无收')
+          console.log('  -', linkText, '颗粒无收')
         }
       } else {
-        console.log(linkText, mute('已签到'))
+        console.log('  -', linkText, mute('已签到'))
       }
     } catch (e) {
-      console.log(linkText, error('任务失败'), error(e.message))
+      console.log('  -', linkText, error('任务失败'), error(e.message))
     }
   }
 }
