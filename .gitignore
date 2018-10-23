@@ -1,6 +1,6 @@
 /.idea
 /config/user.json
-/temp/cookies-*
+/temp
 
 # Logs
 logs

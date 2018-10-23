@@ -1,6 +1,7 @@
 const path = require('path')
 const fs = require('fs')
 const puppeteer = require('puppeteer')
+const chalk = require('chalk')
 const auth = require('./auth')
 
 module.exports = async function () {
@@ -19,7 +20,12 @@ module.exports = async function () {
   })
   const jobsFiles = fs.readdirSync(path.join(__dirname, '/jobs'))
   for (let i = 0; i < jobsFiles.length; i++) {
-    await require('./jobs/' + jobsFiles[i])(browser)
+    try {
+      await require('./jobs/' + jobsFiles[i])(browser)
+    } catch (e) {
+      console.log(chalk.bold.red('任务失败'))
+      console.error(e)
+    }
   }
   console.log('任务已全部完成')
   console.log('-----------------')
