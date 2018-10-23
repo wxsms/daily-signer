@@ -1,6 +1,6 @@
 const auth = require('../auth')
-const chalk = require('chalk')
 const cookies = auth.getSavedCookies()
+const {success, error, mute} = require('../../utils/log')
 
 module.exports = async function (browser) {
   console.log('开始店铺签到任务')
@@ -12,26 +12,30 @@ module.exports = async function (browser) {
   for (let i = 0; i < list.length; i++) {
     const link = await list[i].$('.s-name > a')
     const linkText = await page.evaluate(element => element.textContent, link)
-    const href = await page.evaluate(element => element.getAttribute('href'), link)
-    //console.log(linkText, href)
-    const shopPage = await browser.newPage()
-    await shopPage.setCookie(...cookies)
-    await shopPage.goto(href)
-    await shopPage.waitFor('.jSign')
-    const unsignedLink = await shopPage.$('.unsigned')
-    if (unsignedLink) {
-      const unsignedHref = await shopPage.evaluate(element => element.getAttribute('url'), unsignedLink)
-      //console.log(unsignedHref)
-      await shopPage.goto('https://' + unsignedHref)
-      const jingdou = await shopPage.$('.jingdou')
-      if (jingdou) {
-        const successText = await shopPage.evaluate(element => element.textContent, jingdou)
-        console.log(linkText, chalk.green(successText))
+    try {
+      const href = await page.evaluate(element => element.getAttribute('href'), link)
+      //console.log(linkText, href)
+      const shopPage = await browser.newPage()
+      await shopPage.setCookie(...cookies)
+      await shopPage.goto(href)
+      await shopPage.waitFor('.jSign')
+      const unsignedLink = await shopPage.$('.unsigned')
+      if (unsignedLink) {
+        const unsignedHref = await shopPage.evaluate(element => element.getAttribute('url'), unsignedLink)
+        //console.log(unsignedHref)
+        await shopPage.goto('https://' + unsignedHref)
+        const jingdou = await shopPage.$('.jingdou')
+        if (jingdou) {
+          const successText = await shopPage.evaluate(element => element.textContent, jingdou)
+          console.log(linkText, success(successText))
+        } else {
+          console.log(linkText, '颗粒无收')
+        }
       } else {
-        console.log(linkText, '颗粒无收')
+        console.log(linkText, mute('已签到'))
       }
-    } else {
-      console.log(linkText, chalk.gray('已签到'))
+    } catch (e) {
+      console.log(linkText, error('任务失败'), error(e.message))
     }
   }
 }

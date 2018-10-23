@@ -1,6 +1,6 @@
 const auth = require('../auth')
-const chalk = require('chalk')
 const cookies = auth.getSavedCookies()
+const {success, mute} = require('../../utils/log')
 
 module.exports = async function (browser) {
   console.log('开始每日签到任务')
@@ -10,8 +10,8 @@ module.exports = async function (browser) {
   const result = await page.$('.active-info > .title')
   const successText = await page.evaluate(element => element.textContent, result)
   if (successText.indexOf('获得') >= 0) {
-    console.log(chalk.green(successText))
+    console.log(success(successText))
   } else {
-    console.log(chalk.gray(successText))
+    console.log(mute(successText))
   }
 }

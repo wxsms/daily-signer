@@ -1,8 +1,8 @@
 const path = require('path')
 const fs = require('fs')
 const puppeteer = require('puppeteer')
-const chalk = require('chalk')
 const auth = require('./auth')
+const {error} = require('../utils/log')
 
 module.exports = async function () {
   console.log('任务开始：京东商城')
@@ -23,8 +23,7 @@ module.exports = async function () {
     try {
       await require('./jobs/' + jobsFiles[i])(browser)
     } catch (e) {
-      console.log(chalk.bold.red('任务失败'))
-      console.error(e)
+      console.log(error('任务失败'), error(e.message))
     }
   }
   console.log('任务已全部完成')
