@@ -1,6 +1,9 @@
 {
-  "jd": {
-    "username": "",
-    "password": ""
-  }
+  "jd": [
+    {
+      "username": ""
+      "skipLogin": false,
+      "skip": false
+    }
+  ]
 }

@@ -1,11 +1,13 @@
 const auth = require('../auth/web')
-const cookies = auth.getSavedCookies()
+const puppeteer = require('puppeteer')
 const {success, error, mute} = require('../../utils/log')
 const {abortUselessRequests} = require('../../utils/puppeteer')
 
-module.exports = async function (browser) {
+module.exports = async function (user) {
   console.log('开始店铺签到任务')
+  const browser = await puppeteer.launch()
   try {
+    const cookies = auth.getSavedCookies(user)
     const page = await browser.newPage()
     await abortUselessRequests(page)
     await page.setCookie(...cookies)
@@ -31,20 +33,22 @@ module.exports = async function (browser) {
           const jingdou = await shopPage.$('.jingdou')
           if (jingdou) {
             const successText = await shopPage.evaluate(element => element.textContent, jingdou)
-            console.log('  -', linkText, success(successText))
+            console.log(linkText, success(successText))
           } else {
-            console.log('  -', linkText, '颗粒无收')
+            console.log(linkText, '颗粒无收')
           }
         } else {
-          console.log('  -', linkText, mute('已签到'))
+          console.log(linkText, mute('已签到'))
         }
         await shopPage.close()
       } catch (e) {
-        console.log('  -', linkText, error('任务失败'), error(e.message))
+        console.log(linkText, error('任务失败'), error(e.message))
       }
     }
     await page.close()
   } catch (e) {
     console.log(error('任务失败'), error(e.message))
+  } finally {
+    await browser.close()
   }
 }

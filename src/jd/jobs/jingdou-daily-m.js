@@ -1,9 +1,9 @@
 const auth = require('../auth/mobile')
-const cookies = auth.getSavedCookies()
+const puppeteer = require('puppeteer')
 const {success, mute, error} = require('../../utils/log')
 const {abortUselessRequests} = require('../../utils/puppeteer')
 
-async function getCurrentBeanCount (browser) {
+async function getCurrentBeanCount (browser, cookies) {
   const page = await browser.newPage()
   await abortUselessRequests(page)
   await page.setCookie(...cookies)
@@ -14,22 +14,26 @@ async function getCurrentBeanCount (browser) {
   return parseInt(resultText)
 }
 
-module.exports = async function (browser) {
+module.exports = async function (user) {
   console.log('开始移动端每日签到任务')
+  const browser = await puppeteer.launch()
   try {
-    const beanBefore = await getCurrentBeanCount(browser)
+    const cookies = auth.getSavedCookies(user)
+    const beanBefore = await getCurrentBeanCount(browser, cookies)
     const page = await browser.newPage()
     await abortUselessRequests(page)
     await page.setCookie(...cookies)
     await page.goto('https://bean.m.jd.com/bean/signIndex.action')
-    const beanAfter = await getCurrentBeanCount(browser)
+    const beanAfter = await getCurrentBeanCount(browser, cookies)
     if (beanAfter === beanBefore) {
-      console.log('  -', mute('今日已签到'))
+      console.log(mute('今日已签到'))
     } else {
-      console.log('  -', success(`签到成功，获得${beanAfter - beanBefore}个京豆`))
+      console.log(success(`签到成功，获得${beanAfter - beanBefore}个京豆`))
     }
     await page.close()
   } catch (e) {
     console.log(error('任务失败'), error(e.message))
+  } finally {
+    await browser.close()
   }
 }

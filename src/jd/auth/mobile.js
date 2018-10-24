@@ -2,8 +2,14 @@ const puppeteer = require('puppeteer')
 const fs = require('fs')
 const path = require('path')
 const {abortUselessRequests} = require('../../utils/puppeteer')
+const md5 = require('../../utils/md5')
+const base64 = require('../../utils/base64')
 
-async function login () {
+function getCookiePathByUser (user) {
+  return path.join(__dirname, '../../../temp/', md5('cookies-jd-m' + user.username))
+}
+
+async function login (user) {
   const browser = await puppeteer.launch({
     headless: false,
     defaultViewport: {
@@ -13,40 +19,43 @@ async function login () {
   })
   const page = await browser.newPage()
   await page.goto('https://plogin.m.jd.com/user/login.action')
-  const savedUser = require('../../../config/user.json')
-  if (savedUser) {
-    await page.type('#username', savedUser.jd.username)
-    await page.type('#password', savedUser.jd.password)
-  }
+  user.username && await page.type('#username', user.username)
+  user.password && await page.type('#password', user.password)
   // 等待用户登录成功，页面将跳转到 jd.com
   await page.waitForFunction('window.location.href.indexOf("https://m.jd.com/") >= 0', {timeout: 0})
   const cookies = await page.cookies()
-  fs.writeFileSync(path.join(__dirname, '../../../temp/cookies-jd-m'), JSON.stringify(cookies))
+  fs.writeFileSync(getCookiePathByUser(user), base64.encode(JSON.stringify(cookies)))
   await browser.close()
   console.log('登录成功！')
 }
 
-function getSavedCookies () {
-  const cookieStr = fs.readFileSync(path.join(__dirname, '../../../temp/cookies-jd-m')).toString()
-  return JSON.parse(cookieStr)
+function getSavedCookies (user) {
+  const cookieStr = fs.readFileSync(getCookiePathByUser(user)).toString()
+  return JSON.parse(base64.decode(cookieStr))
 }
 
-async function checkCookieStillValid (cookies) {
-  console.log('检查 Cookies 是否有效...')
-  const browser = await puppeteer.launch()
-  const page = await browser.newPage()
-  // 此处不能忽略资源，否则会无限加载
-  // await abortUselessRequests(page)
-  await page.setCookie(...cookies)
-  await page.goto('https://home.m.jd.com/myJd/newhome.action', {waitUntil: 'networkidle0'})
-  const valid = await page.$('#userName') !== null
-  if (valid) {
-    console.log('Cookies 有效，直接登录')
-  } else {
-    console.log('Cookies 已失效')
+async function checkCookieStillValid (user) {
+  try {
+    console.log('检查 Cookies 是否有效...')
+    const cookies = getSavedCookies(user)
+    const browser = await puppeteer.launch()
+    const page = await browser.newPage()
+    // 此处不能忽略资源，否则会无限加载
+    // await abortUselessRequests(page)
+    await page.setCookie(...cookies)
+    await page.goto('https://home.m.jd.com/myJd/newhome.action', {waitUntil: 'networkidle0'})
+    const valid = await page.$('#userName') !== null
+    if (valid) {
+      console.log('Cookies 有效，直接登录')
+    } else {
+      console.log('Cookies 已失效，请重新登录')
+    }
+    await browser.close()
+    return valid
+  } catch (e) {
+    console.log('Cookies 未找到，请重新登录')
+    return false
   }
-  await browser.close()
-  return valid
 }
 
 module.exports = {login, getSavedCookies, checkCookieStillValid}
