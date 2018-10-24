@@ -1,15 +1,18 @@
 const puppeteer = require('puppeteer')
 const webAuth = require('./auth/web')
 const mobileAuth = require('./auth/mobile')
-const users = require('../../config/user.json').jd
+const users = require('../../../config/user.json').jd
+const JingdouDaily = require('./jobs/jingdou-daily')
+const JingdouShops = require('./jobs/jingdou-shops')
+const JongdouDailyMobile = require('./jobs/jingdou-daily-m')
 
 async function runMobileJobs (user) {
-  await require('./jobs/jingdou-daily-m')(user)
+  await new JongdouDailyMobile(user).saveRun()
 }
 
 async function runWebJobs (user) {
-  await require('./jobs/jingdou-daily')(user)
-  await require('./jobs/jingdou-shops')(user)
+  await new JingdouDaily(user).saveRun()
+  await new JingdouShops(user).saveRun()
 }
 
 module.exports = async function () {

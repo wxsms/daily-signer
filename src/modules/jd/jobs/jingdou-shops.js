@@ -1,16 +1,22 @@
 const auth = require('../auth/web')
-const {success, error, mute} = require('../../utils/log')
-const {abortUselessRequests} = require('../../utils/puppeteer')
-const {getBrowser} = require('../../utils/browser')
+const {success, error, mute} = require('../../../utils/log')
+const {abortUselessRequests} = require('../../../utils/puppeteer')
+const Job = require('../../../interfaces/Job')
 
-module.exports = async function (user) {
-  console.log('开始店铺签到任务')
-  const browser = await getBrowser()
-  try {
-    const cookies = auth.getSavedCookies(user)
-    const page = await browser.newPage()
+module.exports = class JingdouShops extends Job {
+  constructor (props) {
+    super(props)
+    this.name = '店铺签到领京豆'
+  }
+
+  getCookies () {
+    return auth.getSavedCookies(this.user)
+  }
+
+  async run () {
+    const page = await this.browser.newPage()
     await abortUselessRequests(page)
-    await page.setCookie(...cookies)
+    await page.setCookie(...this.cookies)
     await page.goto('https://bean.jd.com/myJingBean/list')
     await page.waitFor('.bean-shop-list')
     const list = await page.$$('.bean-shop-list > li')
@@ -20,9 +26,9 @@ module.exports = async function (user) {
       try {
         const href = await page.evaluate(element => element.getAttribute('href'), link)
         //console.log(linkText, href)
-        const shopPage = await browser.newPage()
+        const shopPage = await this.browser.newPage()
         await abortUselessRequests(shopPage)
-        await shopPage.setCookie(...cookies)
+        await shopPage.setCookie(...this.cookies)
         await shopPage.goto(href)
         await shopPage.waitFor('.jSign')
         const unsignedLink = await shopPage.$('.unsigned')
@@ -46,7 +52,5 @@ module.exports = async function (user) {
       }
     }
     await page.close()
-  } catch (e) {
-    console.log(error('任务失败'), error(e.message))
   }
 }

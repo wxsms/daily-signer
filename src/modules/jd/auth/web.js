@@ -1,13 +1,13 @@
 const puppeteer = require('puppeteer')
 const fs = require('fs')
 const path = require('path')
-const {abortUselessRequests} = require('../../utils/puppeteer')
-const md5 = require('../../utils/md5')
-const base64 = require('../../utils/base64')
-const {getBrowser} = require('../../utils/browser')
+const {abortUselessRequests} = require('../../../utils/puppeteer')
+const md5 = require('../../../utils/md5')
+const base64 = require('../../../utils/base64')
+const {getBrowser} = require('../../../utils/browser')
 
 function getCookiePathByUser (user) {
-  return path.join(__dirname, '../../../temp/', md5('cookies-jd-m' + user.username))
+  return path.join(__dirname, '../../../../temp/', md5('cookies-jd' + user.username))
 }
 
 async function login (user) {
@@ -19,11 +19,12 @@ async function login (user) {
     }
   })
   const page = await browser.newPage()
-  await page.goto('https://plogin.m.jd.com/user/login.action')
-  user.username && await page.type('#username', user.username)
-  user.password && await page.type('#password', user.password)
+  await page.goto('https://passport.jd.com/new/login.aspx')
+  await page.click('.login-tab.login-tab-r > a')
+  user.username && await page.$eval('#loginname', (el, value) => el.value = value, user.username)
+  user.password && await page.$eval('#nloginpwd', (el, value) => el.value = value, user.password)
   // 等待用户登录成功，页面将跳转到 jd.com
-  await page.waitForFunction('window.location.href.indexOf("https://m.jd.com/") >= 0', {timeout: 0})
+  await page.waitForFunction('window.location.href.indexOf("https://www.jd.com") >= 0', {timeout: 0})
   const cookies = await page.cookies()
   fs.writeFileSync(getCookiePathByUser(user), base64.encode(JSON.stringify(cookies)))
   await browser.close()
@@ -39,13 +40,12 @@ async function checkCookieStillValid (user) {
   try {
     console.log('检查 Cookies 是否有效...')
     const cookies = getSavedCookies(user)
-    const browser = await getBrowser()
+    const browser = getBrowser()
     const page = await browser.newPage()
-    // 此处不能忽略资源，否则会无限加载
-    // await abortUselessRequests(page)
+    await abortUselessRequests(page)
     await page.setCookie(...cookies)
-    await page.goto('https://home.m.jd.com/myJd/newhome.action', {waitUntil: 'networkidle0'})
-    const valid = await page.$('#userName') !== null
+    await page.goto('https://order.jd.com/center/list.action')
+    const valid = await page.$('body[myjd="_MYJD_ordercenter"]') !== null
     if (valid) {
       console.log('Cookies 有效，直接登录')
     } else {

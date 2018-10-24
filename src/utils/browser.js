@@ -2,21 +2,14 @@ const puppeteer = require('puppeteer')
 
 let browser = null
 
-async function getBrowser () {
-  if (browser) {
-    return browser
-  } else {
-    const _browser = await puppeteer.launch({
-      headless: true
-    })
-    if (browser) {
-      _browser.close()
-      return browser
-    } else {
-      browser = _browser
-      return browser
-    }
-  }
+async function initBrowser () {
+  browser = await puppeteer.launch({
+    headless: true
+  })
 }
 
-module.exports = {getBrowser}
+function getBrowser () {
+  return browser
+}
+
+module.exports = {initBrowser, getBrowser}
