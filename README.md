@@ -2,6 +2,8 @@
 
 ![](https://img.shields.io/badge/node-%3E%3D8-brightgreen.svg)
 
+![截图](https://user-images.githubusercontent.com/5960988/47428265-50dd2700-d7c5-11e8-9847-0e7caae5108d.jpg)
+
 ## 使用方法
 
 1. 下载代码
@@ -40,4 +42,7 @@
 2. 以后使用则会使用储存的 cookie直接登录，无需再次手动登录
 3. 当 cookie 过期后，会重新进入 1 的流程
 
-注：cookie 使用 base64 加密，储存在项目根目录下的 `temp` 文件夹中。
+注：
+
+1. 京东网页端以及移动端的 cookie 无法共享使用，因此首次使用时京东需要登录两次
+2. cookie 使用 base64 加密，储存在项目根目录下的 `temp` 文件夹中
