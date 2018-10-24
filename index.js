@@ -1,6 +1,7 @@
-const jd = require('./src/modules/jd')
 const fs = require('fs')
 const path = require('path')
+const jd = require('./src/modules/jd')
+const v2ex = require('./src/modules/v2ex')
 const {initBrowser} = require('./src/utils/browser')
 
 async function main () {
@@ -10,6 +11,7 @@ async function main () {
   await initBrowser()
   // start jobs
   await jd()
+  await v2ex()
 }
 
 main()

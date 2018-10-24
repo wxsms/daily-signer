@@ -43,7 +43,7 @@ async function runMobileJobs (user) {
 }
 
 module.exports = async function () {
-  console.log('开始京东商城任务')
+  console.log('开始【京东商城】任务')
   for (let i = 0; i < users.length; i++) {
     const user = users[i]
     if (user.skip) {
@@ -53,6 +53,6 @@ module.exports = async function () {
     await runWebJobs(user)
     await runMobileJobs(user)
   }
-  console.log('任务已全部完成')
+  console.log('【京东商城】任务已全部完成')
   console.log('-----------------')
 }
