@@ -35,7 +35,8 @@ async function checkCookieStillValid (cookies) {
   console.log('检查 Cookies 是否有效...')
   const browser = await puppeteer.launch()
   const page = await browser.newPage()
-  //await abortUselessRequests(page)
+  // 此处不能忽略资源，否则会无限加载
+  // await abortUselessRequests(page)
   await page.setCookie(...cookies)
   await page.goto('https://home.m.jd.com/myJd/newhome.action', {waitUntil: 'networkidle0'})
   const valid = await page.$('#userName') !== null
@@ -44,6 +45,7 @@ async function checkCookieStillValid (cookies) {
   } else {
     console.log('Cookies 已失效')
   }
+  await browser.close()
   return valid
 }
 

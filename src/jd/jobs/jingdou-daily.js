@@ -17,6 +17,7 @@ module.exports = async function (browser) {
     } else {
       console.log('  -', mute(successText))
     }
+    await page.close()
   } catch (e) {
     console.log(error('任务失败'), error(e.message))
   }

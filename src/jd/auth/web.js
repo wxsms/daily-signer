@@ -45,6 +45,7 @@ async function checkCookieStillValid (cookies) {
   } else {
     console.log('Cookies 已失效')
   }
+  await browser.close()
   return valid
 }
 

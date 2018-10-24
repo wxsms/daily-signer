@@ -38,10 +38,12 @@ module.exports = async function (browser) {
         } else {
           console.log('  -', linkText, mute('已签到'))
         }
+        await shopPage.close()
       } catch (e) {
         console.log('  -', linkText, error('任务失败'), error(e.message))
       }
     }
+    await page.close()
   } catch (e) {
     console.log(error('任务失败'), error(e.message))
   }

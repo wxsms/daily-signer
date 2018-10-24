@@ -3,7 +3,9 @@ const webAuth = require('./auth/web')
 const mobileAuth = require('./auth/mobile')
 
 module.exports = async function () {
-  const browser = await puppeteer.launch()
+  const browser = await puppeteer.launch({
+    headless: false
+  })
   console.log('任务开始：京东商城（移动端）')
   try {
     await mobileAuth.checkCookieStillValid(mobileAuth.getSavedCookies())
@@ -21,6 +23,7 @@ module.exports = async function () {
   }
   await require('./jobs/jingdou-daily')(browser)
   await require('./jobs/jingdou-shops')(browser)
+  await browser.close()
   console.log('任务已全部完成')
   console.log('-----------------')
 }
