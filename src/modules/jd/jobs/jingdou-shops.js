@@ -4,8 +4,8 @@ const {abortUselessRequests} = require('../../../utils/puppeteer')
 const Job = require('../../../interfaces/Job')
 
 module.exports = class JingdouShops extends Job {
-  constructor (props) {
-    super(props)
+  constructor (...args) {
+    super(...args)
     this.name = '店铺签到领京豆'
   }
 

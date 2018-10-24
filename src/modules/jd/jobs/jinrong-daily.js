@@ -4,8 +4,8 @@ const {abortUselessRequests} = require('../../../utils/puppeteer')
 const Job = require('../../../interfaces/Job')
 
 module.exports = class JingDouDaily extends Job {
-  constructor (props) {
-    super(props)
+  constructor (...args) {
+    super(...args)
     this.name = '京东金融每日签到'
   }
 
