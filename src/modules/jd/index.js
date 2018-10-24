@@ -1,18 +1,45 @@
-const puppeteer = require('puppeteer')
 const webAuth = require('./auth/web')
 const mobileAuth = require('./auth/mobile')
 const users = require('../../../config/user.json').jd
 const JingdouDaily = require('./jobs/jingdou-daily')
 const JingdouShops = require('./jobs/jingdou-shops')
 const JongdouDailyMobile = require('./jobs/jingdou-daily-m')
+const JinrongDaily = require('./jobs/jinrong-daily')
+const doubleSign = require('./jobs/double-sign')
 
-async function runMobileJobs (user) {
+async function _runMobileJobs (user) {
   await new JongdouDailyMobile(user).saveRun()
+  await new doubleSign(user).saveRun()
+}
+
+async function _runWebJobs (user) {
+  await new JingdouDaily(user).saveRun()
+  await new JingdouShops(user).saveRun()
+  await new JinrongDaily(user).saveRun()
 }
 
 async function runWebJobs (user) {
-  await new JingdouDaily(user).saveRun()
-  await new JingdouShops(user).saveRun()
+  const wValid = await webAuth.checkCookieStillValid(user)
+  if (wValid) {
+    await _runWebJobs(user)
+  } else {
+    if (!user.skipLogin) {
+      await webAuth.login(user)
+      await _runWebJobs(user)
+    }
+  }
+}
+
+async function runMobileJobs (user) {
+  const mValid = await mobileAuth.checkCookieStillValid(user)
+  if (mValid) {
+    await _runMobileJobs(user)
+  } else {
+    if (!user.skipLogin) {
+      await mobileAuth.login(user)
+      await _runMobileJobs(user)
+    }
+  }
 }
 
 module.exports = async function () {
@@ -23,26 +50,8 @@ module.exports = async function () {
       continue
     }
     console.log('用户：', user.username)
-    // jd mobile
-    const mValid = await mobileAuth.checkCookieStillValid(user)
-    if (mValid) {
-      await runMobileJobs(user)
-    } else {
-      if (!user.skipLogin) {
-        await mobileAuth.login(user)
-        await runMobileJobs(user)
-      }
-    }
-    // jd web
-    const wValid = await webAuth.checkCookieStillValid(user)
-    if (wValid) {
-      await runWebJobs(user)
-    } else {
-      if (!user.skipLogin) {
-        await webAuth.login(user)
-        await runWebJobs(user)
-      }
-    }
+    await runWebJobs(user)
+    await runMobileJobs(user)
   }
   console.log('任务已全部完成')
   console.log('-----------------')

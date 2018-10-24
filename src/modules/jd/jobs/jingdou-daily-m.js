@@ -19,7 +19,7 @@ module.exports = class JongdouDailyMobile extends Job {
     await page.setCookie(...this.cookies)
     await page.goto('https://bean.m.jd.com/')
     const result = await page.$('span[type="Bold"]')
-    const resultText = (await page.evaluate(element => element.textContent, result))
+    const resultText = await page.evaluate(element => element.textContent, result)
     await page.close()
     return parseInt(resultText)
   }

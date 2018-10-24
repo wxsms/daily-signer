@@ -4,7 +4,11 @@ let browser = null
 
 async function initBrowser () {
   browser = await puppeteer.launch({
-    headless: true
+    headless: true,
+    defaultViewport: {
+      width: 1280,
+      height: 768
+    }
   })
 }
 
