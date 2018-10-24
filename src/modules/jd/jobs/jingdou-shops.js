@@ -6,7 +6,7 @@ const Job = require('../../../interfaces/Job')
 module.exports = class JingdouShops extends Job {
   constructor (...args) {
     super(...args)
-    this.name = '店铺签到领京豆'
+    this.name = '店铺每日签到'
   }
 
   getCookies () {

@@ -6,7 +6,7 @@ const Job = require('../../../interfaces/Job')
 module.exports = class JongdouDailyMobile extends Job {
   constructor (...args) {
     super(...args)
-    this.name = '移动端每日签到领京豆'
+    this.name = '移动端每日签到'
   }
 
   getCookies () {
