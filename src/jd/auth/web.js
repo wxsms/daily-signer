@@ -4,6 +4,7 @@ const path = require('path')
 const {abortUselessRequests} = require('../../utils/puppeteer')
 const md5 = require('../../utils/md5')
 const base64 = require('../../utils/base64')
+const {getBrowser} = require('../../utils/browser')
 
 function getCookiePathByUser (user) {
   return path.join(__dirname, '../../../temp/', md5('cookies-jd' + user.username))
@@ -39,7 +40,7 @@ async function checkCookieStillValid (user) {
   try {
     console.log('检查 Cookies 是否有效...')
     const cookies = getSavedCookies(user)
-    const browser = await puppeteer.launch()
+    const browser = await getBrowser()
     const page = await browser.newPage()
     await abortUselessRequests(page)
     await page.setCookie(...cookies)
@@ -50,7 +51,7 @@ async function checkCookieStillValid (user) {
     } else {
       console.log('Cookies 已失效，请重新登录')
     }
-    await browser.close()
+    await page.close()
     return valid
   } catch (e) {
     console.log('Cookies 未找到，请重新登录')
