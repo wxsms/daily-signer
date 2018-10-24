@@ -13,7 +13,7 @@
 
 修改 `config/user.json.template`，将其另存为 `config/user.json` 即可。支持设置多个账号。具体字段说明如下：
 
-```json
+```js
 {
   "jd": [
     {
