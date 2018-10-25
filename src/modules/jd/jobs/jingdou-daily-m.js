@@ -7,10 +7,7 @@ module.exports = class JongdouDailyMobile extends Job {
   constructor (...args) {
     super(...args)
     this.name = '移动端每日签到'
-  }
-
-  getCookies () {
-    return auth.getSavedCookies(this.user)
+    this.getCookies = auth.getSavedCookies
   }
 
   async getCurrentBeanCount () {

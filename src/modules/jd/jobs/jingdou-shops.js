@@ -6,11 +6,8 @@ const Job = require('../../../interfaces/Job')
 module.exports = class JingdouShops extends Job {
   constructor (...args) {
     super(...args)
-    this.name = '店铺每日签到'
-  }
-
-  getCookies () {
-    return auth.getSavedCookies(this.user)
+    this.name = '网页端店铺每日签到'
+    this.getCookies = auth.getSavedCookies
   }
 
   async run () {

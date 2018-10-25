@@ -7,10 +7,7 @@ module.exports = class JingDouDaily extends Job {
   constructor (...args) {
     super(...args)
     this.name = '网页端每日签到'
-  }
-
-  getCookies () {
-    return auth.getSavedCookies(this.user)
+    this.getCookies = auth.getSavedCookies
   }
 
   async run () {

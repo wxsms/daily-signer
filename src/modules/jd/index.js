@@ -6,9 +6,11 @@ const JingdouShops = require('./jobs/jingdou-shops')
 const JongdouDailyMobile = require('./jobs/jingdou-daily-m')
 const JinrongDaily = require('./jobs/jinrong-daily')
 const doubleSign = require('./jobs/double-sign')
+const JingdouZhuanpanMobile = require('./jobs/jingdou-zhuanpan-m')
 
 async function _runMobileJobs (user) {
   await new JongdouDailyMobile(user).saveRun()
+  await new JingdouZhuanpanMobile(user).saveRun()
   await new doubleSign(user).saveRun()
 }
 

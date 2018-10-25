@@ -1,15 +1,12 @@
-const auth = require('../auth/web')
+const auth = require('../auth/mobile')
 const {success, mute, error} = require('../../../utils/log')
 const Job = require('../../../interfaces/Job')
 
 module.exports = class JingDouDaily extends Job {
   constructor (...args) {
     super(...args)
-    this.name = '双签'
-  }
-
-  getCookies () {
-    return auth.getSavedCookies(this.user)
+    this.name = '移动端双签'
+    this.getCookies = auth.getSavedCookies
   }
 
   async run () {
