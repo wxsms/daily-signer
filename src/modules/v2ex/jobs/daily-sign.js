@@ -18,12 +18,21 @@ module.exports = class DailySign extends Job {
     await abortUselessRequests(page)
     await page.setCookie(...this.cookies)
     await page.goto('https://www.v2ex.com/mission/daily')
-    const bodyHTML = await page.evaluate(() => document.body.innerHTML)
-    const successMatch = bodyHTML.match(/已连续登录 \d+ 天/)
-    if (successMatch) {
+    const btn = await page.$('input[type="button"].super.normal.button')
+    const btnText = await page.evaluate(element => element.getAttribute('value'), btn)
+    // console.log(btnText)
+    if (btn && btnText.indexOf('领取') >= 0) {
+      await Promise.all([
+        page.waitForFunction('window.location.href.indexOf("/mission/daily/redeem") >= 0'),
+        page.click('input[type="button"]')
+      ])
+      const bodyHTML = await page.evaluate(() => document.body.innerHTML)
+      const successMatch = bodyHTML.match(/已连续登录 \d+ 天/)
       console.log(success(successMatch[0]))
     } else {
-      console.log(mute('签到失败'))
+      const bodyHTML = await page.evaluate(() => document.body.innerHTML)
+      const successMatch = bodyHTML.match(/已连续登录 \d+ 天/)
+      console.log(mute(successMatch[0]))
     }
     await page.close()
   }
