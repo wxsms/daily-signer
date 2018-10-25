@@ -9,7 +9,7 @@ async function doWheel (page) {
   const res = await page.waitForResponse(res => res.url().startsWith('https://api.m.jd.com/client.action?functionId=babelGetLottery') && res.status() === 200)
   try {
     const resJson = JSON.parse((await res.text()).replace(/^jsonp2\(/, '').replace(/\)$/, ''))
-    console.log(success(resJson.promptMsg + resJson.prizeName))
+    console.log(success(resJson.promptMsg), success(resJson.prizeName))
   } catch (e) {
     console.log(error(e.message))
   }
