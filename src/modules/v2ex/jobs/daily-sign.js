@@ -23,8 +23,8 @@ module.exports = class DailySign extends Job {
     // console.log(btnText)
     if (btn && btnText.indexOf('领取') >= 0) {
       await Promise.all([
-        page.waitForFunction('window.location.href.indexOf("/mission/daily/redeem") >= 0'),
-        page.click('input[type="button"]')
+        page.waitForNavigation(),
+        btn.click()
       ])
       const bodyHTML = await page.evaluate(() => document.body.innerHTML)
       const successMatch = bodyHTML.match(/已连续登录 \d+ 天/)
