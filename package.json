@@ -9,6 +9,7 @@
     "start": "node index.js"
   },
   "dependencies": {
+    "canvas": "^2.0.1",
     "chalk": "^2.4.1",
     "puppeteer": "^1.9.0"
   }
