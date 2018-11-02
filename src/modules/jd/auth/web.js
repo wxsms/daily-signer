@@ -6,6 +6,7 @@ const {abortUselessRequests} = require('../../../utils/puppeteer')
 const md5 = require('../../../utils/md5')
 const base64 = require('../../../utils/base64')
 const {getBrowser} = require('../../../utils/browser')
+const {combineRgba, tolerance} = require('../../../utils/canvas')
 
 function getCookiePathByUser (user) {
   return path.join(__dirname, '../../../../temp/', md5('cookies-jd' + user.username))
@@ -20,19 +21,30 @@ function getVerifyPosition (base64, actualWidth) {
       const width = img.naturalWidth
       const height = img.naturalHeight
       ctx.drawImage(img, 0, 0)
-      let cloestX = 0
-      let minSum = 255 * 3
-      for (let i = 0; i < width; i++) {
-        for (let j = 0; j < height; j++) {
-          const data = ctx.getImageData(i, j, 1, 1).data
-          const rgbSum = data[0] + data[1] + data[2]
-          if (rgbSum < minSum) {
-            cloestX = i
-            minSum = rgbSum
+      const maskRgba = [0, 0, 0, 0.65]
+      const t = 10 // 色差容忍值
+      let prevPixelRgba = null
+      for (let x = 0; x < width; x++) {
+        // 重新开始一列，清除上个像素的色值
+        prevPixelRgba = null
+        for (let y = 0; y < height; y++) {
+          const rgba = ctx.getImageData(x, y, 1, 1).data
+          if (prevPixelRgba) {
+            // 所有原图中的 alpha 通道值都是1
+            prevPixelRgba[3] = 1
+            const maskedPrevPixel = combineRgba(prevPixelRgba, maskRgba)
+            // 只要找到了一个色值匹配的像素点则直接返回，因为是自上而下，自左往右的查找，第一个像素点已经满足"最近"的条件
+            if (tolerance(maskedPrevPixel, rgba, t)) {
+              resolve(x * actualWidth / width)
+              return
+            }
+          } else {
+            prevPixelRgba = rgba
           }
         }
       }
-      resolve(cloestX * actualWidth / width)
+      // 没有找到任何符合条件的像素点
+      resolve(0)
     }
     img.onerror = reject
     img.src = base64
@@ -44,7 +56,6 @@ async function login (user) {
   const canAutoLogin = Boolean(user.password && user.username)
   const browser = await puppeteer.launch({
     headless: canAutoLogin,
-    //headless: canAutoLogin,
     defaultViewport: {
       width: 1024,
       height: 768
@@ -72,9 +83,22 @@ async function login (user) {
         await page.evaluate(element => element.getAttribute('src'), img),
         await page.evaluate(element => parseInt(window.getComputedStyle(element).width), img)
       )
-      // 滑块拼图图片
-      const smallImg = await page.$('.JDJRV-smallimg')
-      const smallImgWidth = await page.evaluate(element => element.getBoundingClientRect().width, smallImg)
+
+      /*
+      // debug 用：在页面上展示找到的位置
+      await page.evaluate(distance => {
+        var mark = document.createElement('div')
+        mark.style.height = '10px'
+        mark.style.width = '10px'
+        mark.style.position = 'absolute'
+        mark.style.left = distance + 'px'
+        mark.style.top = '0px'
+        mark.style.backgroundColor = 'green'
+        document.querySelector('.JDJRV-bigimg').appendChild(mark)
+      }, distance)
+      await page.waitFor(2000)
+      */
+
       // 滑块
       const dragBtn = await page.$('.JDJRV-slide-btn')
       const dragBtnPosition = await page.evaluate(element => {
@@ -85,18 +109,27 @@ async function login (user) {
       // 按下位置设置在滑块中心
       const x = dragBtnPosition.x + dragBtnPosition.width / 2
       const y = dragBtnPosition.y + dragBtnPosition.height / 2
-      // 将距离设置为二段（模拟人工操作）
-      const distance1 = distance - 10 - smallImgWidth / 2
-      const distance2 = 10
-      await page.mouse.move(x, y)
-      await page.mouse.down()
-      // 第一次滑动
-      await page.mouse.move(x + distance1, y, {steps: 30})
-      await page.waitFor(500)
-      // 第二次滑动
-      await page.mouse.move(x + distance1 + distance2, y, {steps: 20})
-      await page.waitFor(500)
-      await page.mouse.up()
+
+      if (distance > 10) {
+        // 如果距离够长，则将距离设置为二段（模拟人工操作）
+        const distance1 = distance - 10
+        const distance2 = 10
+        await page.mouse.move(x, y)
+        await page.mouse.down()
+        // 第一次滑动
+        await page.mouse.move(x + distance1, y, {steps: 30})
+        await page.waitFor(500)
+        // 第二次滑动
+        await page.mouse.move(x + distance1 + distance2, y, {steps: 20})
+        await page.waitFor(500)
+        await page.mouse.up()
+      } else {
+        // 否则直接滑到相应位置
+        await page.mouse.move(x, y)
+        await page.mouse.down()
+        await page.mouse.move(x + distance, y, {steps: 30})
+        await page.mouse.up()
+      }
       // 等待验证结果
       await page.waitFor(3000)
     }
