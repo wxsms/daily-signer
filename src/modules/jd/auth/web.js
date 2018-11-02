@@ -43,7 +43,7 @@ async function login (user) {
   // 如果用户名与密码都存在，则无需进入手工登录流程
   const canAutoLogin = Boolean(user.password && user.username)
   const browser = await puppeteer.launch({
-    headless: false,
+    headless: canAutoLogin,
     //headless: canAutoLogin,
     defaultViewport: {
       width: 1024,
