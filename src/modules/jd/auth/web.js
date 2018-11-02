@@ -75,7 +75,7 @@ async function login (user) {
     let tryTimes = 0
     // 最多尝试20次
     while (++tryTimes < 20 && await page.$('.JDJRV-bigimg')) {
-      console.log(`正在尝试破解验证码（第${tryTimes}次）`)
+      console.log(`正在尝试通过验证码（第${tryTimes}次）`)
       // 验证码图片（带缺口）
       const img = await page.$('.JDJRV-bigimg > img')
       // 获取缺口左x坐标
