@@ -6,8 +6,9 @@ import JongdouDailyMobile from './jobs/jingdou-daily-m'
 import JinrongDaily from './jobs/jinrong-daily'
 import DoubleSign from './jobs/double-sign'
 import JingdouZhuanpanMobile from './jobs/jingdou-zhuanpan-m'
+import User from '../../interfaces/User'
 
-const users = require('../../../config/user.json').jd
+const users = <User[]>require('../../../config/user.json').jd
 
 async function _runMobileJobs (user) {
   await new JongdouDailyMobile(user).run()

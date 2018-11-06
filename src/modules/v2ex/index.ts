@@ -1,7 +1,8 @@
 import * as webAuth from './auth/web'
 import DailySign from './jobs/daily-sign'
+import User from '../../interfaces/User'
 
-const users = require('../../../config/user.json').v2ex
+const users = <User[]>require('../../../config/user.json').v2ex
 
 async function _runWebJobs (user) {
   await new DailySign(user).run()

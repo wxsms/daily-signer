@@ -4,7 +4,7 @@
  * @param rgba2 遮罩色
  * @returns {number[]}
  */
-export function combineRgba (rgba1, rgba2) {
+export function combineRgba (rgba1: number[], rgba2: number[]): number[] {
   const [r1, g1, b1, a1] = rgba1
   const [r2, g2, b2, a2] = rgba2
   const a = a1 + a2 - a1 * a2
@@ -22,7 +22,7 @@ export function combineRgba (rgba1, rgba2) {
  * @param t
  * @returns {boolean}
  */
-export function tolerance (rgba1, rgba2, t) {
+export function tolerance (rgba1: number[], rgba2: number[], t: number): boolean {
   const [r1, g1, b1] = rgba1
   const [r2, g2, b2] = rgba2
   return (

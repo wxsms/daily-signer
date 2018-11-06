@@ -12,6 +12,6 @@ export async function initBrowser () {
   })
 }
 
-export function getBrowser () {
+export function getBrowser (): puppeteer.Browser {
   return browser
 }

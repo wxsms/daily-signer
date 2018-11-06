@@ -1,7 +1,7 @@
 {
   "name": "daily-sign",
   "version": "0.0.1",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "author": "wxsms@foxmail.com",
   "license": "MIT",
   "private": false,
