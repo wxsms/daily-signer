@@ -8,7 +8,7 @@ export default class MobileAuth extends Auth {
   }
 
   protected getCookiePath () {
-    return path.join(__dirname, '../../../../temp/', md5('cookies-jd-m' + this.user.username))
+    return path.join(process.cwd(), 'temp', md5('cookies-jd-m' + this.user.username))
   }
 
   protected async _login (page) {

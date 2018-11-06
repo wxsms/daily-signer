@@ -6,9 +6,9 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "start": "node dist/index.js",
-    "dev": "tsc && node dist/index.js",
-    "tsc": "tsc"
+    "start": "node dist/bundle.js",
+    "dev": "npm run rollup && npm start",
+    "rollup": "rollup -c rollup.config.js"
   },
   "dependencies": {
     "canvas": "^2.0.1",
@@ -18,6 +18,10 @@
   "devDependencies": {
     "@types/node": "^10.12.2",
     "@types/puppeteer": "^1.9.1",
+    "rollup": "^0.67.0",
+    "rollup-plugin-typescript": "^1.0.0",
+    "rollup-plugin-uglify": "^6.0.0",
+    "tslib": "^1.9.3",
     "typescript": "^3.1.6"
   }
 }

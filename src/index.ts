@@ -6,7 +6,7 @@ import { initBrowser } from './utils/browser'
 
 async function main () {
   // make sure temp dir exist
-  const tempDir = (path.join(__dirname, '../temp'))
+  const tempDir = (path.join(process.cwd(), 'temp'))
   !fs.existsSync(tempDir) && fs.mkdirSync(tempDir)
   await initBrowser()
   // start jobs

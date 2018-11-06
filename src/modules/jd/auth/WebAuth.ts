@@ -51,7 +51,7 @@ export default class WebAuth extends Auth {
   }
 
   protected getCookiePath () {
-    return path.join(__dirname, '../../../../temp/', md5('cookies-jd' + this.user.username))
+    return path.join(process.cwd(), 'temp', md5('cookies-jd' + this.user.username))
   }
 
   protected async _login (page) {
