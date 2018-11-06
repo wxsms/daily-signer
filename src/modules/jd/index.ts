@@ -24,8 +24,7 @@ async function _runWebJobs (user) {
 
 async function runWebJobs (user) {
   const auth = new WebAuth(user)
-  const wValid = await auth.check()
-  if (wValid) {
+  if (await auth.check()) {
     await _runWebJobs(user)
   } else {
     if (!user.skipLogin) {
@@ -37,8 +36,7 @@ async function runWebJobs (user) {
 
 async function runMobileJobs (user) {
   const auth = new MobileAuth(user)
-  const mValid = await auth.check()
-  if (mValid) {
+  if (await auth.check()) {
     await _runMobileJobs(user)
   } else {
     if (!user.skipLogin) {

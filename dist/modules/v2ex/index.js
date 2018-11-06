@@ -19,8 +19,7 @@ function _runWebJobs(user) {
 function runWebJobs(user) {
     return __awaiter(this, void 0, void 0, function* () {
         const auth = new WebAuth_1.default(user);
-        const wValid = yield auth.check();
-        if (wValid) {
+        if (yield auth.check()) {
             yield _runWebJobs(user);
         }
         else {

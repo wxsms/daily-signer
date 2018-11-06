@@ -67,8 +67,8 @@ class WebAuth extends Auth_1.default {
             // 切换到用户名、密码登录tab
             yield page.click('.login-tab.login-tab-r > a');
             // 自动填写表单
-            this.user.username && (yield page.$eval('#loginname', (el, value) => el.value = value, this.user.username));
-            this.user.password && (yield page.$eval('#nloginpwd', (el, value) => el.value = value, this.user.password));
+            this.user.username && (yield page.$eval('#loginname', (el, value) => el.setAttribute('value', value), this.user.username));
+            this.user.password && (yield page.$eval('#nloginpwd', (el, value) => el.setAttribute('value', value), this.user.password));
             if (this.canAutoLogin) {
                 yield page.click('#loginsubmit');
                 yield page.waitFor(1000);
@@ -107,7 +107,7 @@ class WebAuth extends Auth_1.default {
                     const y = dragBtnPosition.y + dragBtnPosition.height / 2;
                     if (distance > 10) {
                         // 如果距离够长，则将距离设置为二段（模拟人工操作）
-                        const distance1 = Number(distance) - 10;
+                        const distance1 = distance - 10;
                         const distance2 = 10;
                         yield page.mouse.move(x, y);
                         yield page.mouse.down();

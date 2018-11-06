@@ -5,17 +5,17 @@ import md5 from '../../../utils/md5'
 import { combineRgba, tolerance } from '../../../utils/canvas'
 import Auth from '../../../interfaces/Auth'
 
-function getVerifyPosition (base64: string, actualWidth: number) {
+function getVerifyPosition (base64: string, actualWidth: number): Promise<number> {
   return new Promise((resolve, reject) => {
     const canvas = createCanvas(1000, 1000)
     const ctx = canvas.getContext('2d')
     const img = new Image()
     img.onload = () => {
-      const width = img.naturalWidth
-      const height = img.naturalHeight
+      const width: number = img.naturalWidth
+      const height: number = img.naturalHeight
       ctx.drawImage(img, 0, 0)
-      const maskRgba = [0, 0, 0, 0.65]
-      const t = 10 // 色差容忍值
+      const maskRgba: number[] = [0, 0, 0, 0.65]
+      const t: number = 10 // 色差容忍值
       let prevPixelRgba = null
       for (let x = 0; x < width; x++) {
         // 重新开始一列，清除上个像素的色值
@@ -59,20 +59,20 @@ export default class WebAuth extends Auth {
     // 切换到用户名、密码登录tab
     await page.click('.login-tab.login-tab-r > a')
     // 自动填写表单
-    this.user.username && await page.$eval('#loginname', (el, value) => (<HTMLInputElement>el).value = value, this.user.username)
-    this.user.password && await page.$eval('#nloginpwd', (el, value) => (<HTMLInputElement>el).value = value, this.user.password)
+    this.user.username && await page.$eval('#loginname', (el, value) => el.setAttribute('value', value), this.user.username)
+    this.user.password && await page.$eval('#nloginpwd', (el, value) => el.setAttribute('value', value), this.user.password)
     if (this.canAutoLogin) {
       await page.click('#loginsubmit')
       await page.waitFor(1000)
       // 需要验证码
-      let tryTimes = 0
+      let tryTimes: number = 0
       // 最多尝试20次
       while (++tryTimes < 20 && await page.$('.JDJRV-bigimg')) {
         console.log(`正在尝试通过验证码（第${tryTimes}次）`)
         // 验证码图片（带缺口）
         const img = await page.$('.JDJRV-bigimg > img')
         // 获取缺口左x坐标
-        const distance = await getVerifyPosition(
+        const distance: number = await getVerifyPosition(
           await page.evaluate(element => element.getAttribute('src'), img),
           await page.evaluate(element => parseInt(window.getComputedStyle(element).width), img)
         )
@@ -100,13 +100,13 @@ export default class WebAuth extends Auth {
           return {x, y, width, height}
         }, dragBtn)
         // 按下位置设置在滑块中心
-        const x = dragBtnPosition.x + dragBtnPosition.width / 2
-        const y = dragBtnPosition.y + dragBtnPosition.height / 2
+        const x: number = dragBtnPosition.x + dragBtnPosition.width / 2
+        const y: number = dragBtnPosition.y + dragBtnPosition.height / 2
 
         if (distance > 10) {
           // 如果距离够长，则将距离设置为二段（模拟人工操作）
-          const distance1 = Number(distance) - 10
-          const distance2 = 10
+          const distance1: number = distance - 10
+          const distance2: number = 10
           await page.mouse.move(x, y)
           await page.mouse.down()
           // 第一次滑动

@@ -5,7 +5,7 @@ import { getBrowser } from '../utils/browser'
 import User from './User'
 
 export default abstract class Auth {
-  protected constructor (user) {
+  protected constructor (user: User) {
     this.user = user
     this.canAutoLogin = false
   }
@@ -14,9 +14,9 @@ export default abstract class Auth {
 
   protected readonly user: User
 
-  protected abstract async _login (page: puppeteer.Page)
+  protected abstract async _login (page: puppeteer.Page): Promise<void>
 
-  protected abstract async _check (page: puppeteer.Page)
+  protected abstract async _check (page: puppeteer.Page): Promise<boolean>
 
   protected abstract getCookiePath (): string
 
@@ -25,30 +25,30 @@ export default abstract class Auth {
     return <puppeteer.Cookie[]>JSON.parse(base64.decode(cookieStr))
   }
 
-  public async login () {
-    const browser = await puppeteer.launch({
+  public async login (): Promise<void> {
+    const browser: puppeteer.Browser = await puppeteer.launch({
       headless: this.canAutoLogin,
       defaultViewport: {
         width: 1024,
         height: 768
       }
     })
-    const page = await browser.newPage()
+    const page: puppeteer.Page = await browser.newPage()
     await this._login(page)
-    const cookies = await page.cookies()
+    const cookies: puppeteer.Cookie[] = await page.cookies()
     fs.writeFileSync(this.getCookiePath(), base64.encode(JSON.stringify(cookies)))
     await browser.close()
     console.log('登录成功！')
   }
 
-  public async check () {
+  public async check (): Promise<boolean> {
     try {
       console.log('检查 Cookies 是否有效...')
-      const cookies = this.getSavedCookies()
-      const browser = getBrowser()
-      const page = await browser.newPage()
+      const cookies: puppeteer.Cookie[] = this.getSavedCookies()
+      const browser: puppeteer.Browser = getBrowser()
+      const page: puppeteer.Page = await browser.newPage()
       await page.setCookie(...cookies)
-      const valid = await this._check(page)
+      const valid: boolean = await this._check(page)
       if (valid) {
         console.log('Cookies 有效，直接登录')
       } else {

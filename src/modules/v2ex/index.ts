@@ -10,8 +10,7 @@ async function _runWebJobs (user) {
 
 async function runWebJobs (user) {
   const auth = new WebAuth(user)
-  const wValid = await auth.check()
-  if (wValid) {
+  if (await auth.check()) {
     await _runWebJobs(user)
   } else {
     if (!user.skipLogin) {

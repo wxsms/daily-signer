@@ -16,9 +16,9 @@ export default abstract class Job {
 
   protected abstract getCookies (user: User): puppeteer.Cookie[]
 
-  protected abstract async _run ()
+  protected abstract async _run (): Promise<void>
 
-  public async run () {
+  public async run (): Promise<void> {
     console.log(`开始【${this.name}】任务`)
     try {
       this.cookies = this.getCookies(this.user)
