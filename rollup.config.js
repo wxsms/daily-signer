@@ -3,7 +3,7 @@ const uglify = require('rollup-plugin-uglify').uglify
 const fs = require('fs')
 const path = require('path')
 const pkg = JSON.parse(fs.readFileSync(path.resolve('./package.json'), 'utf-8'))
-const external = Object.keys(pkg.dependencies || {})
+const external = ['fs', 'path', 'crypto', ...Object.keys(pkg.dependencies || {})]
 
 module.exports = {
   input: './src/index.ts',

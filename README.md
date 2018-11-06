@@ -21,7 +21,7 @@
 
 1. 下载代码
 2. 添加配置，详见[配置说明](https://github.com/wxsms/daily-signer#配置说明)
-3. 安装依赖：`npm install` or `yarn` (下载困难的可以使用 [cnpm](https://npm.taobao.org/))
+3. 安装依赖：`npm install --production` or `yarn install --production` (下载困难的可以使用 [cnpm](https://npm.taobao.org/))
 4. 运行：`npm start`
 
 ## 配置说明
