@@ -1,16 +1,14 @@
-import * as auth from '../auth/web'
 import { success, mute } from '../../../utils/log'
 import { abortUselessRequests } from '../../../utils/puppeteer'
-import Job from '../../../interfaces/Job'
+import Job from '../interfaces/WebJob'
 
 export default class DailySign extends Job {
   constructor (user) {
     super(user)
     this.name = '每日签到'
-    this.getCookies = auth.getSavedCookies
   }
 
-  _run = async () => {
+  protected _run = async () => {
     const page = await this.browser.newPage()
     await abortUselessRequests(page)
     await page.setCookie(...this.cookies)
@@ -32,9 +30,5 @@ export default class DailySign extends Job {
       console.log(mute(successMatch[0]))
     }
     await page.close()
-  }
-
-  async run () {
-    await super.run()
   }
 }

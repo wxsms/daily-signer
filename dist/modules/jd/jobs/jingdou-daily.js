@@ -8,15 +8,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const auth = require("../auth/web");
 const log_1 = require("../../../utils/log");
 const puppeteer_1 = require("../../../utils/puppeteer");
-const Job_1 = require("../../../interfaces/Job");
-class JingdouDaily extends Job_1.default {
+const WebJob_1 = require("../interfaces/WebJob");
+class JingdouDaily extends WebJob_1.default {
     constructor(user) {
         super(user);
         this.name = '网页端每日签到';
-        this.getCookies = auth.getSavedCookies;
     }
     _run() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -33,12 +31,6 @@ class JingdouDaily extends Job_1.default {
                 console.log(log_1.mute(successText));
             }
             yield page.close();
-        });
-    }
-    run() {
-        const _super = name => super[name];
-        return __awaiter(this, void 0, void 0, function* () {
-            yield _super("run").call(this);
         });
     }
 }

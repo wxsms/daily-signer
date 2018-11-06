@@ -8,11 +8,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const auth = require("../auth/web");
 const log_1 = require("../../../utils/log");
 const puppeteer_1 = require("../../../utils/puppeteer");
-const Job_1 = require("../../../interfaces/Job");
-class DailySign extends Job_1.default {
+const WebJob_1 = require("../interfaces/WebJob");
+class DailySign extends WebJob_1.default {
     constructor(user) {
         super(user);
         this._run = () => __awaiter(this, void 0, void 0, function* () {
@@ -40,13 +39,6 @@ class DailySign extends Job_1.default {
             yield page.close();
         });
         this.name = '每日签到';
-        this.getCookies = auth.getSavedCookies;
-    }
-    run() {
-        const _super = name => super[name];
-        return __awaiter(this, void 0, void 0, function* () {
-            yield _super("run").call(this);
-        });
     }
 }
 exports.default = DailySign;

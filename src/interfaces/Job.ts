@@ -3,10 +3,8 @@ import { getBrowser } from '../utils/browser'
 import * as puppeteer from 'puppeteer'
 import User from './User'
 
-type GetCookieFunction = (user: User) => puppeteer.Cookie[];
-
-export default class Job {
-  constructor (user: User) {
+export default abstract class Job {
+  protected constructor (user: User) {
     this.user = user
     this.browser = getBrowser()
   }
@@ -15,11 +13,10 @@ export default class Job {
   protected readonly user: User
   protected name: string
   protected cookies: puppeteer.Cookie[]
-  protected getCookies: GetCookieFunction
 
-  protected async _run () {
-    return
-  }
+  protected abstract getCookies (user: User): puppeteer.Cookie[]
+
+  protected abstract async _run ()
 
   public async run () {
     console.log(`开始【${this.name}】任务`)

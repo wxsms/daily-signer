@@ -15,11 +15,6 @@ class Job {
         this.user = user;
         this.browser = browser_1.getBrowser();
     }
-    _run() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return;
-        });
-    }
     run() {
         return __awaiter(this, void 0, void 0, function* () {
             console.log(`开始【${this.name}】任务`);

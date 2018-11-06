@@ -1,16 +1,14 @@
-import * as auth from '../auth/mobile'
-import { success, mute, error } from '../../../utils/log'
+import { success, mute } from '../../../utils/log'
 import { abortUselessRequests } from '../../../utils/puppeteer'
-import Job from '../../../interfaces/Job'
+import Job from '../interfaces/MobileJob'
 
 export default class JongdouDailyMobile extends Job {
   constructor (user) {
     super(user)
     this.name = '移动端每日签到'
-    this.getCookies = auth.getSavedCookies
   }
 
-  _run = async () => {
+  protected _run = async () => {
     const beanBefore = await this.getCurrentBeanCount()
     const page = await this.browser.newPage()
     await abortUselessRequests(page)
@@ -34,9 +32,5 @@ export default class JongdouDailyMobile extends Job {
     const resultText = await page.evaluate(element => element.textContent, result)
     await page.close()
     return parseInt(resultText)
-  }
-
-  async run () {
-    await super.run()
   }
 }

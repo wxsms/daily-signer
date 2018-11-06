@@ -1,16 +1,14 @@
-import * as auth from '../auth/web'
 import { success, mute, warning } from '../../../utils/log'
 import { abortUselessRequests } from '../../../utils/puppeteer'
-import Job from '../../../interfaces/Job'
+import Job from '../interfaces/WebJob'
 
-export default class JingDouDaily extends Job {
+export default class JinrongDaily extends Job {
   constructor (user) {
     super(user)
     this.name = '网页端京东金融每日签到'
-    this.getCookies = auth.getSavedCookies
   }
 
-  _run = async () => {
+  protected _run = async () => {
     const page = await this.browser.newPage()
     await abortUselessRequests(page)
     await page.setCookie(...this.cookies)
@@ -27,9 +25,5 @@ export default class JingDouDaily extends Job {
       console.log(successText ? success(successText) : warning('未知签到状态'))
     }
     await page.close()
-  }
-
-  async run () {
-    await super.run()
   }
 }

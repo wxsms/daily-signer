@@ -1,16 +1,14 @@
-import * as auth from '../auth/web'
 import { success, mute, error } from '../../../utils/log'
 import { abortUselessRequests } from '../../../utils/puppeteer'
-import Job from '../../../interfaces/Job'
+import Job from '../interfaces/WebJob'
 
 export default class JingdouShops extends Job {
   constructor (user) {
     super(user)
     this.name = '网页端店铺每日签到'
-    this.getCookies = auth.getSavedCookies
   }
 
-  _run = async () => {
+  protected _run = async () => {
     const page = await this.browser.newPage()
     await abortUselessRequests(page)
     await page.setCookie(...this.cookies)
@@ -49,9 +47,5 @@ export default class JingdouShops extends Job {
       }
     }
     await page.close()
-  }
-
-  async run () {
-    await super.run()
   }
 }

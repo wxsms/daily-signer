@@ -8,11 +8,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const auth = require("../auth/mobile");
 const log_1 = require("../../../utils/log");
 const puppeteer_1 = require("../../../utils/puppeteer");
-const Job_1 = require("../../../interfaces/Job");
-class JongdouDailyMobile extends Job_1.default {
+const MobileJob_1 = require("../interfaces/MobileJob");
+class JongdouDailyMobile extends MobileJob_1.default {
     constructor(user) {
         super(user);
         this._run = () => __awaiter(this, void 0, void 0, function* () {
@@ -31,7 +30,6 @@ class JongdouDailyMobile extends Job_1.default {
             yield page.close();
         });
         this.name = '移动端每日签到';
-        this.getCookies = auth.getSavedCookies;
     }
     getCurrentBeanCount() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -43,12 +41,6 @@ class JongdouDailyMobile extends Job_1.default {
             const resultText = yield page.evaluate(element => element.textContent, result);
             yield page.close();
             return parseInt(resultText);
-        });
-    }
-    run() {
-        const _super = name => super[name];
-        return __awaiter(this, void 0, void 0, function* () {
-            yield _super("run").call(this);
         });
     }
 }

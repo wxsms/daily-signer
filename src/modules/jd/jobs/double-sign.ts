@@ -1,15 +1,13 @@
-import * as auth from '../auth/mobile'
 import { success, mute, error } from '../../../utils/log'
-import Job from '../../../interfaces/Job'
+import Job from '../interfaces/MobileJob'
 
-export default class JingDouDaily extends Job {
+export default class DoubleSign extends Job {
   constructor (user) {
     super(user)
     this.name = '移动端双签'
-    this.getCookies = auth.getSavedCookies
   }
 
-  _run = async () => {
+  protected _run = async () => {
     const page = await this.browser.newPage()
     await page.setCookie(...this.cookies)
     await page.goto('https://ljd.m.jd.com/countersign/receiveAward.json')
@@ -33,9 +31,5 @@ export default class JingDouDaily extends Job {
     } else {
       console.log(error('未知状态'), error(code))
     }
-  }
-
-  async run () {
-    await super.run()
   }
 }

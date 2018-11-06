@@ -8,10 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const auth = require("../auth/mobile");
 const log_1 = require("../../../utils/log");
 const puppeteer_1 = require("../../../utils/puppeteer");
-const Job_1 = require("../../../interfaces/Job");
+const MobileJob_1 = require("../interfaces/MobileJob");
 function doWheel(page) {
     return __awaiter(this, void 0, void 0, function* () {
         const btn = yield page.$('.wheel_pointer_wrap');
@@ -26,7 +25,7 @@ function doWheel(page) {
         }
     });
 }
-class JingdouZhuanpanMobile extends Job_1.default {
+class JingdouZhuanpanMobile extends MobileJob_1.default {
     constructor(user) {
         super(user);
         this._run = () => __awaiter(this, void 0, void 0, function* () {
@@ -64,13 +63,6 @@ class JingdouZhuanpanMobile extends Job_1.default {
             yield page.close();
         });
         this.name = '移动端京豆转福利';
-        this.getCookies = auth.getSavedCookies;
-    }
-    run() {
-        const _super = name => super[name];
-        return __awaiter(this, void 0, void 0, function* () {
-            yield _super("run").call(this);
-        });
     }
 }
 exports.default = JingdouZhuanpanMobile;

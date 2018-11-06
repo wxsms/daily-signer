@@ -8,10 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const auth = require("../auth/mobile");
 const log_1 = require("../../../utils/log");
-const Job_1 = require("../../../interfaces/Job");
-class JingDouDaily extends Job_1.default {
+const MobileJob_1 = require("../interfaces/MobileJob");
+class DoubleSign extends MobileJob_1.default {
     constructor(user) {
         super(user);
         this._run = () => __awaiter(this, void 0, void 0, function* () {
@@ -46,13 +45,6 @@ class JingDouDaily extends Job_1.default {
             }
         });
         this.name = '移动端双签';
-        this.getCookies = auth.getSavedCookies;
-    }
-    run() {
-        const _super = name => super[name];
-        return __awaiter(this, void 0, void 0, function* () {
-            yield _super("run").call(this);
-        });
     }
 }
-exports.default = JingDouDaily;
+exports.default = DoubleSign;

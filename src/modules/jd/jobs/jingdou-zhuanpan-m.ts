@@ -1,7 +1,6 @@
-import * as auth from '../auth/mobile'
 import { success, mute, error } from '../../../utils/log'
 import { abortUselessRequests } from '../../../utils/puppeteer'
-import Job from '../../../interfaces/Job'
+import Job from '../interfaces/MobileJob'
 
 async function doWheel (page) {
   const btn = await page.$('.wheel_pointer_wrap')
@@ -19,10 +18,9 @@ export default class JingdouZhuanpanMobile extends Job {
   constructor (user) {
     super(user)
     this.name = '移动端京豆转福利'
-    this.getCookies = auth.getSavedCookies
   }
 
-  _run = async () => {
+  protected _run = async () => {
     const page = await this.browser.newPage()
     await abortUselessRequests(page)
     await page.setCookie(...this.cookies)
@@ -53,9 +51,5 @@ export default class JingdouZhuanpanMobile extends Job {
     }
     //await page.waitFor(9999999, {timeout: 0})
     await page.close()
-  }
-
-  async run () {
-    await super.run()
   }
 }
