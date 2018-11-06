@@ -1,16 +1,23 @@
 {
   "name": "daily-sign",
   "version": "0.0.1",
-  "main": "index.js",
+  "main": "src/index.js",
   "author": "wxsms@foxmail.com",
   "license": "MIT",
   "private": false,
   "scripts": {
-    "start": "node index.js"
+    "start": "node dist/index.js",
+    "dev": "tsc && node dist/index.js",
+    "tsc": "tsc"
   },
   "dependencies": {
     "canvas": "^2.0.1",
     "chalk": "^2.4.1",
     "puppeteer": "^1.9.0"
+  },
+  "devDependencies": {
+    "@types/node": "^10.12.2",
+    "@types/puppeteer": "^1.9.1",
+    "typescript": "^3.1.6"
   }
 }
