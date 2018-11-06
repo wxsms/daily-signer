@@ -22,15 +22,4 @@ export default class JongdouDailyMobile extends Job {
     }
     await page.close()
   }
-
-  async getCurrentBeanCount () {
-    const page = await this.browser.newPage()
-    await abortUselessRequests(page)
-    await page.setCookie(...this.cookies)
-    await page.goto('https://bean.m.jd.com/')
-    const result = await page.$('span[type="Bold"]')
-    const resultText = await page.evaluate(element => element.textContent, result)
-    await page.close()
-    return parseInt(resultText)
-  }
 }

@@ -8,6 +8,7 @@ export default class DoubleSign extends Job {
   }
 
   protected _run = async () => {
+    const beanBefore = await this.getCurrentBeanCount()
     const page = await this.browser.newPage()
     await page.setCookie(...this.cookies)
     await page.goto('https://ljd.m.jd.com/countersign/receiveAward.json')
@@ -16,7 +17,12 @@ export default class DoubleSign extends Job {
     const awardData = res.res.data && res.res.data[0]
     if (code === '0') {
       if (awardData) {
-        console.log(success(`领到${awardData.awardName}${awardData.awardCount}个`))
+        const beanAfter = await this.getCurrentBeanCount()
+        if (beanAfter === beanBefore) {
+          console.log(mute('今日已签到'))
+        } else {
+          console.log(success(`签到成功，获得${beanAfter - beanBefore}个京豆`))
+        }
       } else {
         console.log(mute('颗粒无收'))
       }
