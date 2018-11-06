@@ -8,8 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const webAuth = require("./auth/web");
-const mobileAuth = require("./auth/mobile");
+const WebAuth_1 = require("./auth/WebAuth");
+const MobileAuth_1 = require("./auth/MobileAuth");
 const jingdou_daily_1 = require("./jobs/jingdou-daily");
 const jingdou_shops_1 = require("./jobs/jingdou-shops");
 const jingdou_daily_m_1 = require("./jobs/jingdou-daily-m");
@@ -33,13 +33,14 @@ function _runWebJobs(user) {
 }
 function runWebJobs(user) {
     return __awaiter(this, void 0, void 0, function* () {
-        const wValid = yield webAuth.checkCookieStillValid(user);
+        const auth = new WebAuth_1.default(user);
+        const wValid = yield auth.check();
         if (wValid) {
             yield _runWebJobs(user);
         }
         else {
             if (!user.skipLogin) {
-                yield webAuth.login(user);
+                yield auth.login();
                 yield _runWebJobs(user);
             }
         }
@@ -47,13 +48,14 @@ function runWebJobs(user) {
 }
 function runMobileJobs(user) {
     return __awaiter(this, void 0, void 0, function* () {
-        const mValid = yield mobileAuth.checkCookieStillValid(user);
+        const auth = new MobileAuth_1.default(user);
+        const mValid = yield auth.check();
         if (mValid) {
             yield _runMobileJobs(user);
         }
         else {
             if (!user.skipLogin) {
-                yield mobileAuth.login(user);
+                yield auth.login();
                 yield _runMobileJobs(user);
             }
         }

@@ -1,5 +1,5 @@
-import * as webAuth from './auth/web'
-import * as  mobileAuth from './auth/mobile'
+import WebAuth from './auth/WebAuth'
+import MobileAuth from './auth/MobileAuth'
 import JingdouDaily from './jobs/jingdou-daily'
 import JingdouShops from './jobs/jingdou-shops'
 import JongdouDailyMobile from './jobs/jingdou-daily-m'
@@ -23,24 +23,26 @@ async function _runWebJobs (user) {
 }
 
 async function runWebJobs (user) {
-  const wValid = await webAuth.checkCookieStillValid(user)
+  const auth = new WebAuth(user)
+  const wValid = await auth.check()
   if (wValid) {
     await _runWebJobs(user)
   } else {
     if (!user.skipLogin) {
-      await webAuth.login(user)
+      await auth.login()
       await _runWebJobs(user)
     }
   }
 }
 
 async function runMobileJobs (user) {
-  const mValid = await mobileAuth.checkCookieStillValid(user)
+  const auth = new MobileAuth(user)
+  const mValid = await auth.check()
   if (mValid) {
     await _runMobileJobs(user)
   } else {
     if (!user.skipLogin) {
-      await mobileAuth.login(user)
+      await auth.login()
       await _runMobileJobs(user)
     }
   }

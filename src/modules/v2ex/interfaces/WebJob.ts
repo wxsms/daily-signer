@@ -1,6 +1,15 @@
 import Job from '../../../interfaces/Job'
-import * as auth from '../auth/web'
+import Auth from '../auth/WebAuth'
 
 export default abstract class WebJob extends Job {
-  protected getCookies = auth.getSavedCookies
+  protected constructor (user) {
+    super(user)
+    this.auth = new Auth(user)
+  }
+
+  protected auth: Auth
+
+  protected getCookies () {
+    return this.auth.getSavedCookies()
+  }
 }

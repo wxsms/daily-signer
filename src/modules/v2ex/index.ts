@@ -1,4 +1,4 @@
-import * as webAuth from './auth/web'
+import WebAuth from './auth/WebAuth'
 import DailySign from './jobs/daily-sign'
 import User from '../../interfaces/User'
 
@@ -9,12 +9,13 @@ async function _runWebJobs (user) {
 }
 
 async function runWebJobs (user) {
-  const wValid = await webAuth.checkCookieStillValid(user)
+  const auth = new WebAuth(user)
+  const wValid = await auth.check()
   if (wValid) {
     await _runWebJobs(user)
   } else {
     if (!user.skipLogin) {
-      await webAuth.login(user)
+      await auth.login()
       await _runWebJobs(user)
     }
   }

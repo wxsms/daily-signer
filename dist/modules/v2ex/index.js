@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const webAuth = require("./auth/web");
+const WebAuth_1 = require("./auth/WebAuth");
 const daily_sign_1 = require("./jobs/daily-sign");
 const users = require('../../../config/user.json').v2ex;
 function _runWebJobs(user) {
@@ -18,13 +18,14 @@ function _runWebJobs(user) {
 }
 function runWebJobs(user) {
     return __awaiter(this, void 0, void 0, function* () {
-        const wValid = yield webAuth.checkCookieStillValid(user);
+        const auth = new WebAuth_1.default(user);
+        const wValid = yield auth.check();
         if (wValid) {
             yield _runWebJobs(user);
         }
         else {
             if (!user.skipLogin) {
-                yield webAuth.login(user);
+                yield auth.login();
                 yield _runWebJobs(user);
             }
         }
