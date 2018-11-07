@@ -5,7 +5,7 @@ import Job from '../interfaces/WebJob'
 export default class JinrongDaily extends Job {
   constructor (user) {
     super(user)
-    this.name = '网页端京东金融每日签到'
+    this.name = '网页端金融每日签到'
   }
 
   protected _run = async () => {

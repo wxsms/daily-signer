@@ -7,6 +7,7 @@ import JinrongDaily from './jobs/JinrongDaily'
 import DoubleSign from './jobs/DoubleSign'
 import JingdouZhuanpanMobile from './jobs/JingdouZhuanpanMobile'
 import FuliDailyMobile from './jobs/FuliDailyMobile'
+import JinrongZhuanqianMobile from './jobs/JinrongZhuanqianMobile'
 import User from '../../interfaces/User'
 import config from '../../config/index'
 
@@ -17,6 +18,7 @@ async function _runMobileJobs (user) {
   await new FuliDailyMobile(user).run()
   await new JingdouZhuanpanMobile(user).run()
   await new DoubleSign(user).run()
+  await new JinrongZhuanqianMobile(user).run()
 }
 
 async function _runWebJobs (user) {
