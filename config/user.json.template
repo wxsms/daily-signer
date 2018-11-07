@@ -3,7 +3,8 @@
     {
       "username": "",
       "skipLogin": false,
-      "skip": false
+      "skip": false,
+      "skipJobs": []
     }
   ]，
   "v2ex": []

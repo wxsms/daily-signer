@@ -19,12 +19,22 @@ export default abstract class Job {
   protected abstract async _run (): Promise<void>
 
   public async run (): Promise<void> {
+    const skipJobs = this.user.skipJobs
+    if (skipJobs && skipJobs.indexOf(this.name) >= 0) {
+      console.log(`跳过【${this.name}】任务`)
+      return
+    }
     console.log(`开始【${this.name}】任务`)
     try {
       this.cookies = this.getCookies(this.user)
       await this._run()
     } catch (e) {
-      console.log(error('任务失败'), error(e.message))
+      console.log(error('任务失败，将重试一次'), error(e.message))
+      try {
+        await this._run()
+      } catch (e) {
+        console.log(error('任务失败'), error(e.message))
+      }
     }
   }
 }
