@@ -1,5 +1,5 @@
 import WebAuth from './auth/WebAuth'
-import DailySign from './jobs/daily-sign'
+import DailySign from './jobs/DailySign'
 import User from '../../interfaces/User'
 import config from '../../config/index'
 

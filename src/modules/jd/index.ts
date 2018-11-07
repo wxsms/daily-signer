@@ -1,18 +1,20 @@
 import WebAuth from './auth/WebAuth'
 import MobileAuth from './auth/MobileAuth'
-import JingdouDaily from './jobs/jingdou-daily'
-import JingdouShops from './jobs/jingdou-shops'
-import JongdouDailyMobile from './jobs/jingdou-daily-m'
-import JinrongDaily from './jobs/jinrong-daily'
-import DoubleSign from './jobs/double-sign'
-import JingdouZhuanpanMobile from './jobs/jingdou-zhuanpan-m'
+import JingdouDaily from './jobs/JingdouDaily'
+import JingdouShops from './jobs/JingdouShops'
+import JingdouDailyMobile from './jobs/JingdouDailyMobile'
+import JinrongDaily from './jobs/JinrongDaily'
+import DoubleSign from './jobs/DoubleSign'
+import JingdouZhuanpanMobile from './jobs/JingdouZhuanpanMobile'
+import FuliDailyMobile from './jobs/FuliDailyMobile'
 import User from '../../interfaces/User'
 import config from '../../config/index'
 
 const users = <User[]>config.jd
 
 async function _runMobileJobs (user) {
-  await new JongdouDailyMobile(user).run()
+  await new JingdouDailyMobile(user).run()
+  await new FuliDailyMobile(user).run()
   await new JingdouZhuanpanMobile(user).run()
   await new DoubleSign(user).run()
 }

@@ -1,4 +1,4 @@
-import { success, mute, warning } from '../../../utils/log'
+import { success, mute, warn } from '../../../utils/log'
 import { abortUselessRequests } from '../../../utils/puppeteer'
 import Job from '../interfaces/WebJob'
 
@@ -22,7 +22,7 @@ export default class JinrongDaily extends Job {
       await page.waitFor(1000)
       await page.waitFor('#getRewardText')
       const successText = await page.evaluate(element => element.textContent, await page.$('#getRewardText'))
-      console.log(successText ? success(successText) : warning('未知签到状态'))
+      console.log(successText ? success(successText) : warn('未知签到状态'))
     }
     await page.close()
   }

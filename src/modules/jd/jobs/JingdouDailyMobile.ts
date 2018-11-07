@@ -2,7 +2,7 @@ import { success, mute } from '../../../utils/log'
 import { abortUselessRequests } from '../../../utils/puppeteer'
 import Job from '../interfaces/MobileJob'
 
-export default class JongdouDailyMobile extends Job {
+export default class JingdouDailyMobile extends Job {
   constructor (user) {
     super(user)
     this.name = '移动端每日签到'
