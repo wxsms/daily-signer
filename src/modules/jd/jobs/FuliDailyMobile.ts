@@ -9,12 +9,15 @@ export default class FuliDailyMobile extends Job {
   }
 
   protected async _run () {
+    const homepage = 'https://wqs.jd.com/promote/201712/mwelfare/m.html?logintag=#/main'
     const beanBefore = await this.getCurrentBeanCount()
     const page = await this.browser.newPage()
     await Job.emulatePhone(page)
     await abortUselessRequests(page)
     await page.setCookie(...this.cookies)
-    await page.goto('https://wqs.jd.com/promote/201712/mwelfare/m.html?logintag=#/main')
+    await page.goto(homepage, {waitUntil: 'networkidle0'})
+    // 签到
+    console.log('执行签到...')
     const signBtn = await page.$('.signDay_day_item.day_able')
     if (signBtn) {
       await signBtn.click()
@@ -22,8 +25,7 @@ export default class FuliDailyMobile extends Job {
       try {
         const signData = JSON.parse((await res.text()).replace(/^try{.+?\(/, '').replace(/\);.+$/, ''))
         if (signData.ret == 0 && signData.level > 0) {
-          const beanAfter = await this.getCurrentBeanCount()
-          console.log(success(`签到成功，获得${beanAfter - beanBefore}京豆`))
+          console.log(success(`签到成功`))
         } else if (signData.ret == 10) {
           console.log(warn('网络异常，请重试'))
         } else if (signData.ret == 11) {
@@ -41,12 +43,55 @@ export default class FuliDailyMobile extends Job {
     } else {
       console.log(mute('今日已签到'))
     }
+    // 每日任务
+    let tryTimes = 0
+    // 当页面上的任务按钮数为0，或尝试次数>5时结束
+    while ((await page.$$('.welfareTask_btn')).length > 0 && ++tryTimes < 5) {
+      // 找到所有任务按钮
+      const taskBtns = await page.$$('.welfareTask_btn')
+      for (let i = 0; i < taskBtns.length; i++) {
+        const btn = taskBtns[i]
+        const text = await page.evaluate(el => el.textContent, btn)
+        if (text === '立即前往') {
+          // 打开新页面执行任务
+          const taskPage = await this.browser.newPage()
+          await Job.emulatePhone(taskPage)
+          await abortUselessRequests(taskPage)
+          await taskPage.setCookie(...this.cookies)
+          await taskPage.goto(homepage, {waitUntil: 'networkidle0'})
+          // 新页面上的任务按钮
+          const taskBtns = await taskPage.$$('.welfareTask_btn')
+          for (let i = 0; i < taskBtns.length; i++) {
+            const btn = taskBtns[i]
+            const text = await taskPage.evaluate(el => el.textContent, btn)
+            // 只要找到任何一个任务按钮，则点击（实际上应该是外层的同个按钮）
+            if (text === '立即前往') {
+              console.log('执行每日福利任务...')
+              await Promise.all([
+                taskPage.waitForNavigation({waitUntil: 'networkidle0'}),
+                btn.click()
+              ])
+              await taskPage.close()
+              break
+            }
+          }
+        } else if (text === '点击领取') {
+          await btn.click()
+        }
+      }
+      await page.reload({waitUntil: 'networkidle0'})
+    }
+
+    const beanAfter = await this.getCurrentBeanCount()
+    if (beanAfter - beanBefore > 0) {
+      console.log(success(`共获得${beanAfter - beanBefore}京豆`))
+    }
     await page.close()
   }
 }
 
 /**
- * ref
+ * ref1
  */
 // URL
 // https://s.m.jd.com/activemcenter/muserwelfare/sign
@@ -138,3 +183,9 @@ signFn: function(item) {
     mClickReport("MWelfare_SignCheckGift");
   }
 },*/
+
+/**
+ * ref2
+ */
+// URL https://s.m.jd.com/activemcenter/muserwelfare/draw
+// RES try{ jsonpCBKF({"active":"mrenwu26","prize":[{"batchid":"","couponid":"","level":52}],"ret":0,"retmsg":"领取成功"} );}catch(e){}
