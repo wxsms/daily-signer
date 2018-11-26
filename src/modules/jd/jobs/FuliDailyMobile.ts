@@ -61,11 +61,14 @@ export default class FuliDailyMobile extends Job {
           await taskPage.goto(homepage, {waitUntil: 'networkidle0'})
           // 新页面上的任务按钮
           const taskBtns = await taskPage.$$('.welfareTask_btn')
+          const taskAwards = await taskPage.$$('.welfareTask_info > p:first-child')
           for (let i = 0; i < taskBtns.length; i++) {
             const btn = taskBtns[i]
+            const award = taskAwards[i]
             const text = await taskPage.evaluate(el => el.textContent, btn)
+            const textAward = await taskPage.evaluate(el => el.textContent, award)
             // 只要找到任何一个任务按钮，则点击（实际上应该是外层的同个按钮）
-            if (text === '立即前往') {
+            if (text === '立即前往' && textAward.indexOf('京豆') >= 0) {
               console.log('执行每日福利任务...')
               await Promise.all([
                 taskPage.waitForNavigation({waitUntil: 'networkidle0'}),
