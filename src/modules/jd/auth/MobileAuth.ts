@@ -21,6 +21,6 @@ export default class MobileAuth extends Auth {
 
   protected async _check (page) {
     await page.goto('https://home.m.jd.com/myJd/newhome.action', {waitUntil: 'networkidle0'})
-    return await page.$('#userName') !== null
+    return await page.$('.user_info') !== null
   }
 }
