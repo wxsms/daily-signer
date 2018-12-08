@@ -4,7 +4,7 @@ let browser = null
 
 export async function initBrowser () {
   browser = await puppeteer.launch({
-    headless: true,
+    headless: process.env.DEBUG !== '1',
     defaultViewport: {
       width: 1280,
       height: 768
