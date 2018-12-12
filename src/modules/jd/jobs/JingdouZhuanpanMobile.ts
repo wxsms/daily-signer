@@ -25,6 +25,8 @@ export default class JingdouZhuanpanMobile extends Job {
     await abortUselessRequests(page)
     await page.setCookie(...this.cookies)
     await page.goto('https://bean.m.jd.com/')
+    // 模态框会导致目标元素点不到，将它处理掉
+    await page.addStyleTag({content: '.modal{z-index: -1 !important;display: none !important;}'})
     const linkHandlers = await page.$x('//span[contains(text(), \'转福利\')]//ancestor::div[@accessible]')
     if (linkHandlers.length > 0) {
       //console.log(await page.evaluate(element => element.textContent, linkHandlers[0]))
