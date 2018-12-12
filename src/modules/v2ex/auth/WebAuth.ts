@@ -22,7 +22,23 @@ export default class WebAuth extends Auth {
 
   protected async _check (page) {
     await abortUselessRequests(page)
-    await page.goto('https://www.v2ex.com/settings')
-    return await page.$('form[action="/settings"]') !== null
+    // V站由于某种特殊的原因，登录检测也需要用签到方式。因此当登录检测通过后，签到就已经成功了
+    await page.goto('https://www.v2ex.com/mission/daily')
+    const btn = await page.$('input[type="button"].super.normal.button')
+    const btnText = await page.evaluate(element => element.getAttribute('value'), btn)
+    // console.log(btnText)
+    if (btn && btnText.indexOf('领取') >= 0) {
+      const bodyHTMLBefore = await page.evaluate(() => document.body.innerHTML)
+      const beforeMatch = bodyHTMLBefore.match(/已连续登录 \d+ 天/)
+      await Promise.all([
+        page.waitForNavigation(),
+        btn.click()
+      ])
+      const bodyHTML = await page.evaluate(() => document.body.innerHTML)
+      const successMatch = bodyHTML.match(/已连续登录 \d+ 天/)
+      return successMatch[0] !== beforeMatch[0]
+    } else {
+      return true
+    }
   }
 }
