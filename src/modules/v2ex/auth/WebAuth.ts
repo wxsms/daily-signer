@@ -2,6 +2,7 @@ import * as path from 'path'
 import { abortUselessRequests } from '../../../utils/puppeteer'
 import md5 from '../../../utils/md5'
 import Auth from '../../../interfaces/Auth'
+import { success } from '../../../utils/log'
 
 export default class WebAuth extends Auth {
   constructor (user) {
@@ -36,7 +37,11 @@ export default class WebAuth extends Auth {
       ])
       const bodyHTML = await page.evaluate(() => document.body.innerHTML)
       const successMatch = bodyHTML.match(/已连续登录 \d+ 天/)
-      return successMatch[0] !== beforeMatch[0]
+      const isSuccess = successMatch[0] !== beforeMatch[0]
+      if (isSuccess) {
+        console.log(success('签到成功'))
+      }
+      return isSuccess
     } else {
       return true
     }
